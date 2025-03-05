@@ -1,1 +1,1 @@
-# AWS-Automation-Scripts
+# AWS Automation Scripts
