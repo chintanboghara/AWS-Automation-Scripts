@@ -4,8 +4,6 @@ This repository contains a collection of Python scripts for automating AWS opera
 
 ## Installation
 
-### Prerequisites
-
 - **Python 3.6+**  
   Make sure you have Python installed. You can download it from [python.org](https://www.python.org/downloads/).
 
@@ -31,7 +29,7 @@ This repository contains a collection of Python scripts for automating AWS opera
   ```
   Alternatively, set the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
-### Creating a Virtual Environment
+## Creating a Virtual Environment
 
 It's a good practice to use a virtual environment to manage dependencies. Follow these steps:
 
