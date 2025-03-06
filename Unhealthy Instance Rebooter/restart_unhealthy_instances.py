@@ -1,60 +1,46 @@
-#!/usr/bin/env python3
 import boto3
-import argparse
 import logging
-import sys
+from botocore.exceptions import ClientError
 
-def restart_unhealthy_instances(dry_run: bool = False) -> None:
-    """
-    Restart all EC2 instances that are unhealthy based on their instance status.
-    
-    Unhealthy instances (where the instance status is not 'ok') are rebooted.
-    The dry_run option allows you to simulate the reboot actions without making any changes.
-    
-    Args:
-        dry_run (bool): If True, simulate the reboot actions.
-    """
-    ec2 = boto3.client('ec2')
-    
+# Initialize a session using Amazon EC2
+session = boto3.Session(
+    aws_access_key_id='YOUR_ACCESS_KEY',
+    aws_secret_access_key='YOUR_SECRET_KEY',
+    region_name='YOUR_REGION_NAME'
+)
+
+ec2 = session.client('ec2')
+
+
+def get_unhealthy_instances():
+    """Retrieve unhealthy EC2 instances."""
     try:
-        statuses = ec2.describe_instance_status(IncludeAllInstances=True)
-    except Exception as e:
-        logging.error(f"Error retrieving instance statuses: {e}")
-        sys.exit(1)
-    
-    instance_statuses = statuses.get('InstanceStatuses', [])
-    
-    if not instance_statuses:
-        print("No instance statuses available to check.")
-        return
+        response = ec2.describe_instance_status(
+            Filters=[{'Name': 'instance-status.status', 'Values': ['impaired']}]
+        )
+        return [instance['InstanceId'] for instance in response['InstanceStatuses']]
+    except ClientError as e:
+        logging.error(e)
+        return []
 
-    for status in instance_statuses:
-        instance_id = status.get('InstanceId')
-        inst_status = status.get('InstanceStatus', {}).get('Status', 'unknown')
-        
-        if inst_status.lower() != 'ok':
-            if dry_run:
-                print(f"Dry run: Would reboot instance {instance_id} (status: {inst_status}).")
-            else:
-                try:
-                    ec2.reboot_instances(InstanceIds=[instance_id])
-                    print(f"Rebooted instance {instance_id} (status: {inst_status}).")
-                except Exception as e:
-                    logging.error(f"Error rebooting instance {instance_id}: {e}")
 
-def parse_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Restart all EC2 instances with unhealthy status."
-    )
-    parser.add_argument(
-        '--dry-run', action='store_true',
-        help="Simulate the reboot actions without actually rebooting instances."
-    )
-    return parser.parse_args()
+def reboot_instances(instance_ids):
+    """Reboot the given EC2 instances."""
+    try:
+        ec2.reboot_instances(InstanceIds=instance_ids)
+        logging.info(f'Rebooted instances: {instance_ids}')
+    except ClientError as e:
+        logging.error(e)
+
 
 def main():
-    args = parse_arguments()
-    restart_unhealthy_instances(dry_run=args.dry_run)
+    """Main function to reboot unhealthy instances."""
+    unhealthy_instances = get_unhealthy_instances()
+    if unhealthy_instances:
+        reboot_instances(unhealthy_instances)
+    else:
+        logging.info('No unhealthy instances found.')
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     main()
