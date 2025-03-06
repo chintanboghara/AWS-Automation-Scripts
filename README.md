@@ -1,3 +1,5 @@
+[![Lint Code Base](https://github.com/chintanboghara/AWS-Automation-Scripts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/chintanboghara/AWS-Automation-Scripts/actions/workflows/ci.yml)
+
 # AWS Automation Scripts
 
 This repository contains a collection of Python scripts for automating AWS operations using [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html).
