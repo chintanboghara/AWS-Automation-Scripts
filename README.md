@@ -28,5 +28,3 @@ This repository contains a collection of Python scripts for automating AWS opera
   aws configure
   ```
   Alternatively, set the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-
-![AWS-Automation-Scripts](https://github.com/user-attachments/assets/bb616579-a208-4023-b73b-38a9f3f62e42)
