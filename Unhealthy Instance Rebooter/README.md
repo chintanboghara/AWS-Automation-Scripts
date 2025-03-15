@@ -1,4 +1,4 @@
- Command to Run the Script
+# Command to Run the Script
 
 - **To perform actual reboots of unhealthy instances:**
   ```bash
